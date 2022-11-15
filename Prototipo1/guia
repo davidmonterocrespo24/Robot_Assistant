@@ -1,0 +1,7 @@
+sudo apt-get install libportaudio2
+
+
+sudo nano /boot/cmdline.txt
+fbcon=map:10 fbcon=font:VGA8x8 
+
+copiar el archivo ".asoundrc" a la carpeta root asi el usuario root puede encontrar el dispositivo de sonido

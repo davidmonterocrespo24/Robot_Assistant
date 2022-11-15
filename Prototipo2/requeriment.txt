@@ -1,0 +1,4 @@
+tenacity
+sounddevice
+grpcio
+google-api-python-client
