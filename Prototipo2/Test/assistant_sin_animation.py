@@ -21,18 +21,17 @@ import grpc
 import google.auth.transport.grpc
 import google.auth.transport.requests
 import google.oauth2.credentials
-from emotions import emotions
+
 from google.assistant.embedded.v1alpha2 import (
     embedded_assistant_pb2,
     embedded_assistant_pb2_grpc
 )
 import pygame
 from tenacity import retry, stop_after_attempt, retry_if_exception
-
-import assistant_helpers
-import audio_helpers
-import device_helpers
-import auth_helpers as au
+from Helper import assistant_helpers
+from Helper import audio_helpers
+from Helper import device_helpers
+from Helper import auth_helpers as au
 
 
 from Display import MySprite
@@ -52,35 +51,13 @@ FPS = 5 #Frames per second
     
 
 
-def set_emotion(current_emotion, str):
-        splits = str.split()
-        for split in splits:
-                for i in range(len(emotions)):
-                        for j in range(len(emotions[i])):
-                                if split.lower() == emotions[i][j]:
-                                        return i
-        return 1
-    
+
 
 
 class Assistant():
-    current_emotion = 1
-    previous_emotion = 1
-        
-    screen = None;
-    SIZE = WIDTH, HEIGHT = 400, 200 #the width and height of our screen
-    FPS = 5 #Frames per second
-    my_sprite = None
-    my_group = None
+   
  
-    def __init__(self,language_code,device_id,device_model_id):
-        pygame.init()
-        self.screen = pygame.display.set_mode(self.SIZE)
-        pygame.display.set_caption("Trace")
-        self.my_sprite = MySprite()
-        self.my_group = pygame.sprite.Group(self.my_sprite)   
-        loop = 1
-        self.clock = pygame.time.Clock()
+    def __init__(self,language_code,device_id,device_model_id):       
        
         self.language_code=language_code
         self.api_endpoint = ASSISTANT_API_ENDPOINT
@@ -167,36 +144,13 @@ class Assistant():
         restart = False
         continue_dialog = True
         print('Start.')
-        global first
-        loop=1
+        
         try:
             while continue_dialog:
                 self.logger.info('While.')
                 continue_dialog = False
                 self.conversation_stream.start_recording()
-                self.logger.info('Recording audio request.')
-                self.current_emotion = 1
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        continue_dialog = 0
-                    
-                self.my_group.update()      
-                self.screen.fill((0,0,0))
-                self.my_group.draw(self.screen)
-                pygame.display.update()
-                self.clock.tick(FPS)
-                if first:
-                    print("animating")
-                    self.previous_emotion = self.current_emotion
-                    first = False
-                    self.my_sprite.index=0
-                    self.my_sprite.set_state(emotions[current_emotion][0])
-                else:
-                    if self.current_emotion != self.previous_emotion:
-                        self.previous_emotion = self.current_emotion
-                        self.my_sprite.index=0
-                        self.my_sprite.set_state(emotions[self.current_emotion][0])
-                        print("animating")
+                self.logger.info('Recording audio request.')               
 
 
                 def iter_assist_requests():
@@ -223,15 +177,11 @@ class Assistant():
                         if lastFlag:
                             self.logger.info('Playing assistant response.')
                             lastFlag = 0
-                            final = ' '.join(r.transcript for r in resp.speech_results)  
-                            self.current_emotion = set_emotion(self.current_emotion, final)                          
+                            final = ' '.join(r.transcript for r in resp.speech_results)                            
                     if resp.dialog_state_out.supplemental_display_text:
                         display_text=resp.dialog_state_out.supplemental_display_text
-                        self.logger.info('Response text:' + ''.join(display_text))
-                        self.current_emotion = set_emotion(self.current_emotion, display_text)
-                        print("Emotion Detected Oir ************************: "+str(self.current_emotion))
-                    if len(resp.audio_out.audio_data) > 0:
-                        print("conversation_stream   write************************")
+                        self.logger.info('Response text:' + ''.join(display_text))                        
+                    if len(resp.audio_out.audio_data) > 0:                       
                         self.conversation_stream.write(resp.audio_out.audio_data)
                     if resp.dialog_state_out.conversation_state:
                         self.conversation_state_bytes = resp.dialog_state_out.conversation_state
@@ -248,9 +198,7 @@ class Assistant():
 
                 self.logger.info('Finished playing assistant response.')
                 self.conversation_stream.stop_playback()
-                self.current_emotion = 1
-            print("animation ended")
-            pygame.quit()      
+               
             self.conversation_stream.close()
         except Exception as e:
             self._create_assistant(self.credentials)
@@ -317,3 +265,8 @@ class Assistant():
         for data in self.conversation_stream:
             # Subsequent requests need audio data, but not config.
             yield embedded_assistant_pb2.AssistRequest(audio_in=data)
+
+
+assistant = Assistant(language_code="en-AU")
+while(True):
+    assistant.assist()

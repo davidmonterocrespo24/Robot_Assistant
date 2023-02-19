@@ -21,21 +21,19 @@ import grpc
 import google.auth.transport.grpc
 import google.auth.transport.requests
 import google.oauth2.credentials
-from emotions import emotions
+
 from google.assistant.embedded.v1alpha2 import (
     embedded_assistant_pb2,
     embedded_assistant_pb2_grpc
 )
 import pygame
 from tenacity import retry, stop_after_attempt, retry_if_exception
-
 import assistant_helpers
 import audio_helpers
 import device_helpers
 import auth_helpers as au
 
 
-from servoMovementAndDisplay import MySprite
 
 
 ASSISTANT_API_ENDPOINT = 'embeddedassistant.googleapis.com'
@@ -58,7 +56,7 @@ FPS = 5 #Frames per second
 class Assistant():
    
  
-    def __init__(self,language_code,device_id,device_model_id):       
+    def __init__(self,language_code):       
        
         self.language_code=language_code
         self.api_endpoint = ASSISTANT_API_ENDPOINT
@@ -266,3 +264,8 @@ class Assistant():
         for data in self.conversation_stream:
             # Subsequent requests need audio data, but not config.
             yield embedded_assistant_pb2.AssistRequest(audio_in=data)
+
+
+assistant = Assistant(language_code="en-AU")
+while(True):
+    assistant.assist()

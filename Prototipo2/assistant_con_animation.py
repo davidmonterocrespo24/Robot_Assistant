@@ -29,13 +29,13 @@ from google.assistant.embedded.v1alpha2 import (
 import pygame
 from tenacity import retry, stop_after_attempt, retry_if_exception
 import threading
-import assistant_helpers
-import audio_helpers
-import device_helpers
-import auth_helpers as au
+from Helper import assistant_helpers
+from Helper import  audio_helpers
+from Helper import  device_helpers
+from Helper import  auth_helpers as au
 
 
-from servoMovementAndDisplay import MySprite
+from Display import MySprite
 
 
 ASSISTANT_API_ENDPOINT = 'embeddedassistant.googleapis.com'
@@ -63,11 +63,12 @@ class Animation (threading.Thread):
         current_emotion = startEmotion
         previous_emotion = startEmotion
         pygame.init()
-        self.screen = pygame.display.set_mode(SIZE)
+        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         pygame.display.set_caption("Trace")
         self.my_sprite = MySprite()
         self.my_group = pygame.sprite.Group(self.my_sprite)   
-       
+        screen.blit(pygame.transform.rotate(screen, 180), (0, 0))
+        self.screen = screen
         self.clock = pygame.time.Clock()
     
     
@@ -81,7 +82,7 @@ class Animation (threading.Thread):
                
             for event in pygame.event.get():
                 print(event.type)
-                if event.type == pygame.QUIT or event.type == pygame.K_ESCAPE or event.type == pygame.K_LCTRL:
+                if event.type == pygame.QUIT or event.type == pygame.K_ESCAPE or event.type == pygame.K_LCTRL or event.type == pygame.MOUSEBUTTONDOWN:
                     loop = 0
             if first:               
                 first = False

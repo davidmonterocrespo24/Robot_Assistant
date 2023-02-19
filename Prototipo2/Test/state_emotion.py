@@ -1,6 +1,6 @@
 import threading
 import time
-from servoMovementAndDisplay import default, init, listen, happy, sad, angry, fear, disgust, surprise
+from Display import default, init, listen, happy, sad, angry, fear, disgust, surprise
 
 exitFlag = 0
 first = True

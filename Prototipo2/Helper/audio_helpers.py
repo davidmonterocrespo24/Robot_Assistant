@@ -54,7 +54,10 @@ def normalize_audio_buffer(buf, volume_percentage, sample_width=2):
     arr = array.array('h', buf)
     for idx in range(0, len(arr)):
         arr[idx] = int(arr[idx]*scale)
-    buf = arr.tostring()
+    try:
+        buf = arr.tostring()
+    except AttributeError:
+        buf = arr.tobytes()
     return buf
 
 
@@ -190,18 +193,12 @@ class SoundDeviceStream(object):
 
     def read(self, size):
         """Read bytes from the stream."""
-        buf, overflow = self._audio_stream.read(size)
-        if overflow:
-            logging.warning('SoundDeviceStream read overflow (%d, %d)',
-                            size, len(buf))
+        buf, overflow = self._audio_stream.read(size)        
         return bytes(buf)
 
     def write(self, buf):
         """Write bytes to the stream."""
-        underflow = self._audio_stream.write(buf)
-        if underflow:
-            logging.warning('SoundDeviceStream write underflow (size: %d)',
-                            len(buf))
+        underflow = self._audio_stream.write(buf)        
         return len(buf)
 
     def flush(self):

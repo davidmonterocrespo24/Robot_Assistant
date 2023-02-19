@@ -136,27 +136,21 @@ class MySprite(pygame.sprite.Sprite):
         p5=False   
         if lf >= self.lfmin and lf <= self.lfmax:
             p1 = multiprocessing.Process(target=self.kit_angle, args=(self.LF,lf, 0., ))
+            p1.start()
         if rf >= self.rfmin and rf <= self.rfmax:
             p2 = multiprocessing.Process(target=self.kit_angle, args=(self.RF,rf, 0, ))
-            
+            p2.start()
         if lt >= self.ltmin and lt <= self.ltmax:
             p3 = multiprocessing.Process(target=self.kit_angle, args=(self.LT,lt,0, ))
+            p3.start()
         if rt >= self.rtmin and rt <= self.rtmax:
             p4 = multiprocessing.Process(target=self.kit_angle, args=(self.RT,rt,0, ))
+            p4.start()
         if nk >= self.nkmin and nk<=self.nkmax:    
             p5 = multiprocessing.Process(target=self.kit_angle, args=(self.NK,nk,0, ))
-        if p1:
-            p1.start()
-        if p2:
-            p2.start()
-        if p3:
-            p3.start()
-        if p4:
-            p4.start()
-        if p5:
             p5.start()
-        
-        
+    
+       
     def sad(self):
         self.set_angles(lf=self.lfmax, lt=self.ltmin, rf=self.rfmin, rt=self.rtmax, nk=self.nkmax)
         time.sleep(1)

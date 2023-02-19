@@ -21,8 +21,7 @@ import uuid
 
 import google.auth.transport.requests
 
-import auth_helpers
-
+from . import auth_helpers
 
 _DEVICE_MODEL = "voice-kit"
 _DEVICE_MANUFACTURER = "AIY Projects"
