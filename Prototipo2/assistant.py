@@ -67,7 +67,7 @@ class Assistant():
     current_emotion = 1
     previous_emotion = 1
         
-    screen = None;
+    screen = None
     SIZE = WIDTH, HEIGHT = 400, 200 #the width and height of our screen
     FPS = 5 #Frames per second
     my_sprite = None
@@ -132,8 +132,7 @@ class Assistant():
     
     def assist(self):
         #global animate
-        print('Assist.')
-        
+        print('Assist.')        
         # Configure audio source and sink.
         self.audio_device = None
         self.audio_source = self.audio_device = (

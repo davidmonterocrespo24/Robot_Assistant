@@ -61,8 +61,8 @@ class MySprite(pygame.sprite.Sprite):
             #print("Cargando archivos..............:"+str(os.path.join(os.getcwd(),'Eyes',expression[i])))   
             arch=[]      
             for k in range(0,len(archivos)):
-                arch.append(str(k+1)+expression[i]+".png")     
-                print("Cargando archivos..............:"+str(str(k+1)+expression[i]))
+                arch.append(archivos[k])     
+                print("Cargando archivos..............:"+str(str(k+1)+archivos[k]))
             f_imagenes.append(arch)
             index_array=[]            
             for j in range(0,len(f_imagenes[i])):
@@ -82,6 +82,7 @@ class MySprite(pygame.sprite.Sprite):
         
     def set_state(self,state):
         self.state=state
+        self.index=0
        
         print("Estado:------------------------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ", state)
         if self.state == 'Enojado':

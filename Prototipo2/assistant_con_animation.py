@@ -54,71 +54,15 @@ current_emotion = 0
 previous_emotion = 0
 
 
-class Animation (threading.Thread):
 
 
-    def __init__(self, startEmotion):
-       
-        threading.Thread.__init__(self)
-        current_emotion = startEmotion
-        previous_emotion = startEmotion
-        pygame.init()
-        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-        pygame.display.set_caption("Trace")
-        self.my_sprite = MySprite()
-        self.my_group = pygame.sprite.Group(self.my_sprite)   
-        screen.blit(pygame.transform.rotate(screen, 180), (0, 0))
-        self.screen = screen
-        self.clock = pygame.time.Clock()
-    
-    
-        
-    def run(self):        
-        global first
-        global current_emotion
-        global previous_emotion
-        loop = 1
-        while loop:   
-               
-            for event in pygame.event.get():
-                print(event.type)
-                if event.type == pygame.QUIT or event.type == pygame.K_ESCAPE or event.type == pygame.K_LCTRL or event.type == pygame.MOUSEBUTTONDOWN:
-                    loop = 0
-            if first:               
-                first = False
-                self.my_sprite.set_state('Normal')
-            else:
-                print("RUN------current_emotion----"+str(emotions[current_emotion][0])+"--------------"+str(emotions[previous_emotion][0])+"--previous_emotion------") 
-                if current_emotion != previous_emotion:
-                    print("Emociones------------------------------------"+emotions[current_emotion][0])
-                    previous_emotion = current_emotion
-                    self.my_sprite.set_state(emotions[current_emotion][0])
-        
-            self.my_group.update()      
-            self.screen.fill((0,0,0))
-            self.my_group.draw(self.screen)
-            pygame.display.update()
-            self.clock.tick(FPS)
-        pygame.quit()
-        quit()
-
-def set_emotion(str):
-        splits = str.split()
-        for split in splits:
-                for i in range(len(emotions)):
-                        for j in range(len(emotions[i])):
-                                if split.upper() == emotions[i][j].upper():
-                                        return i
-        return 1
-
-class Assistant():
+class Assistant(threading.Thread):
    
  
     def __init__(self,language_code):       
-       
+        threading.Thread.__init__(self)
         self.language_code=language_code
         self.api_endpoint = ASSISTANT_API_ENDPOINT
-        Animation(1).start()
         # Setup logging.
         logging.basicConfig() # filename='assistant.log', level=logging.DEBUG if self.verbose else logging.INFO)
         self.logger = logging.getLogger("assistant")
@@ -163,7 +107,7 @@ class Assistant():
         self.credentials=credentials
     
     
-    def assist(self):
+    def run(self):
         #global animate
         print('Assist.')
         global current_emotion
