@@ -44,14 +44,14 @@ DIALOG_FOLLOW_ON = embedded_assistant_pb2.DialogStateOut.DIALOG_FOLLOW_ON
 CLOSE_MICROPHONE = embedded_assistant_pb2.DialogStateOut.CLOSE_MICROPHONE
 DEFAULT_GRPC_DEADLINE = 60 * 3 + 5
 
-
-first = True
-
-SIZE = WIDTH, HEIGHT = 480, 320 #the width and height of our screen
-FPS = 4 #Frames per second
-first = True
-current_emotion = 0
-previous_emotion = 0
+def set_emotion(str):
+        splits = str.split()
+        for split in splits:
+                for i in range(len(emotions)):
+                        for j in range(len(emotions[i])):
+                                if split.upper() == emotions[i][j].upper():
+                                        return i
+        return 1
 
 
 
@@ -59,10 +59,12 @@ previous_emotion = 0
 class Assistant(threading.Thread):
    
  
-    def __init__(self,language_code):       
+    def __init__(self,animation,language_code):       
         threading.Thread.__init__(self)
+        self.stop_event = threading.Event()
         self.language_code=language_code
         self.api_endpoint = ASSISTANT_API_ENDPOINT
+        self.animation=animation
         # Setup logging.
         logging.basicConfig() # filename='assistant.log', level=logging.DEBUG if self.verbose else logging.INFO)
         self.logger = logging.getLogger("assistant")
@@ -110,7 +112,6 @@ class Assistant(threading.Thread):
     def run(self):
         #global animate
         print('Assist.')
-        global current_emotion
         
         # Configure audio source and sink.
         self.audio_device = None
@@ -180,13 +181,13 @@ class Assistant(threading.Thread):
                             lastFlag = 0
                             final = ' '.join(r.transcript for r in resp.speech_results) 
                             self.logger.info('Text:' + ''.join(final))   
-                            current_emotion = set_emotion(final)      
-                            print("Emotion Detected Assitente ************************: "+str(current_emotion))                            
+                            self.animation.current_emotion = set_emotion(final)      
+                            print("Emotion Detected Assitente ************************: "+str(self.animation.current_emotion))                            
                     if resp.dialog_state_out.supplemental_display_text:
                         display_text=resp.dialog_state_out.supplemental_display_text 
                         self.logger.info('Text:' + ''.join(display_text))   
-                        current_emotion = set_emotion(display_text)      
-                        print("Emotion Detected Oir ************************: "+str(current_emotion))             
+                        self.animation.current_emotion = set_emotion(display_text)      
+                        print("Emotion Detected Oir ************************: "+str(self.animation.current_emotion))             
                     if len(resp.audio_out.audio_data) > 0:                       
                         self.conversation_stream.write(resp.audio_out.audio_data)
                     if resp.dialog_state_out.conversation_state:
@@ -206,6 +207,9 @@ class Assistant(threading.Thread):
                 self.conversation_stream.stop_playback()
                
             self.conversation_stream.close()
+            self.animation.current_emotion = 0
+            self.run()
+            
         except Exception as e:
             self._create_assistant(self.credentials)
             self.logger.exception('Skipping because of connection reset')
@@ -213,7 +217,7 @@ class Assistant(threading.Thread):
         try:
             self.conversation_stream.close()
             if restart:
-                self.assist()
+                self.run()
         except Exception:
             self.logger.error('Failed to close conversation_stream.')
 
@@ -271,3 +275,6 @@ class Assistant(threading.Thread):
         for data in self.conversation_stream:
             # Subsequent requests need audio data, but not config.
             yield embedded_assistant_pb2.AssistRequest(audio_in=data)
+
+    def stop(self):
+        self.stop_event.set()

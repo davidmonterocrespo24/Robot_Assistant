@@ -12,7 +12,7 @@ import multiprocessing
 import time
 
 SIZE = WIDTH, HEIGHT = 400, 200 #the width and height of our screen
-FPS = 5 #Frames per second
+FPS = 15
  
 
 
@@ -110,6 +110,7 @@ class MySprite(pygame.sprite.Sprite):
         
 
     def animation(self,index_image):
+        print("Animation: ",index_image)
         if self.index >= index_image[len(index_image)-1]:
             self.index = index_image[len(index_image)-1]
         if self.index < index_image[0]:

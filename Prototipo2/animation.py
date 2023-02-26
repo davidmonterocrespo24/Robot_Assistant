@@ -1,15 +1,14 @@
 import pygame
 from Display import *
 from emotions import *
-current_emotion = 0
-previous_emotion = 0
+from assistant_con_animation import Assistant
 
 class Animation ():
 
 
     def __init__(self, startEmotion):       
-        current_emotion = startEmotion
-        previous_emotion = startEmotion
+        self.current_emotion = 0
+        self.previous_emotion = 0
         pygame.init()
         screen = pygame.display.set_mode((480, 320))
         #pygame.display.set_caption("Trace")
@@ -18,12 +17,12 @@ class Animation ():
         #screen.blit(pygame.transform.rotate(screen, 180), (0, 0))
         self.screen = screen
         self.clock = pygame.time.Clock()
+        self.assistant = Assistant(self,language_code="en-AU")
+        self.assistant.start()
 
 
     def run(self):        
         global first
-        global current_emotion
-        global previous_emotion
         loop = 1
 
         first = False
@@ -37,27 +36,21 @@ class Animation ():
                 first = False
                 self.my_sprite.set_state('Normal')
             if event.type == pygame.MOUSEBUTTONDOWN:
-                current_emotion = current_emotion+1
+                self.current_emotion = self.current_emotion+1
             else:
-                print("RUN------current_emotion----"+str(emotions[current_emotion][0])+"--------------"+str(emotions[previous_emotion][0])+"--previous_emotion------") 
-                if current_emotion != previous_emotion:
-                    print("Emociones------------------------------------"+emotions[previous_emotion][0])
-                    previous_emotion = current_emotion
-                    self.my_sprite.set_state(emotions[current_emotion][0])
+                print("RUN------current_emotion----"+str(emotions[self.current_emotion][0])+"--------------"+str(emotions[self.previous_emotion][0])+"--previous_emotion------") 
+                if self.current_emotion != self.previous_emotion:
+                    print("Emociones------------------------------------"+emotions[self.previous_emotion][0])
+                    self.previous_emotion = self.current_emotion
+                    self.my_sprite.set_state(emotions[self.current_emotion][0])
         
             self.my_group.update()      
             self.screen.fill((0,0,0))
             self.my_group.draw(self.screen)
             pygame.display.update()
             self.clock.tick(15)
+        self.assistant.stop()
+        self.assistant.join()
         pygame.quit()
         quit()
 
-def set_emotion(str):
-        splits = str.split()
-        for split in splits:
-                for i in range(len(emotions)):
-                        for j in range(len(emotions[i])):
-                                if split.upper() == emotions[i][j].upper():
-                                        return i
-        return 1
