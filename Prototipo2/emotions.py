@@ -7,8 +7,7 @@ emotions =  [   ["Normal"],
                 ["Really"],
                 ["Sorprendido", "Exitado", "emocionado"],   
                 ["Amor","dulce", "hermoso", "caliente", "enfermo de amor", "coqueto", "cariño", "admiro", "adorable", "cariño", "amor", "ángel", "increíble" , "atracción", "bebé", "bebé", "miel", "linda", "linda", "linda", "cuidado", "encantador", "cupido", "elegante", "novia", " novio", "San Valentín", "hermoso", "magdalena", "travieso", "pasión", "reina", "descarado", "seductor", "cariño", "unqiue", "cálido"] ,
-                ["Bullying","gordo", "nerd", "feo", "zorra", "fenómeno", "idiota", "a nadie le gustas", "suicidate", "vete a morir", "deseo que mueras", "violación", "pornografía", "acecho", "asesinato", "violación", "amenaza", "asalto", "secuestro", "secuestro", "hurto en tiendas" , "robo", "bastardo", "hijo de puta", "gordo", "gay", "molesto", "racista", "perra", "muerto", "noob", "pequeño", "pequeño", "falso", "perdedor ", "joder", "más feo", "tonto", "estúpido", "perdedores", "diablos", "cirugía", "basura", "pinchazo", "culo", "trasero", "coño", "mierda", "mierda", "polla", "maldita", "pelusa", "cosas", "joder"],
-                ["Disparar","disparo","dispara""arma","bala","matar", "asesinato","pistola"] ,       
+                ["Disparar","disparo","dispara""arma","bala","pistola"] ,       
             ]
 
 

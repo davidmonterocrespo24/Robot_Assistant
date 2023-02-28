@@ -35,9 +35,6 @@ from Helper import  device_helpers
 from Helper import  auth_helpers as au
 
 
-from Display import MySprite
-
-
 ASSISTANT_API_ENDPOINT = 'embeddedassistant.googleapis.com'
 END_OF_UTTERANCE = embedded_assistant_pb2.AssistResponse.END_OF_UTTERANCE
 DIALOG_FOLLOW_ON = embedded_assistant_pb2.DialogStateOut.DIALOG_FOLLOW_ON

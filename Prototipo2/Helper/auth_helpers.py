@@ -27,15 +27,19 @@ import google.auth.transport
 import google.oauth2.credentials
 
 
+import platform
+
 _ASSISTANT_OAUTH_SCOPE = (
     'https://www.googleapis.com/auth/assistant-sdk-prototype'
 )
 
 # Legacy fallback: old locations of secrets/credentials.
-_OLD_CLIENT_SECRETS = os.path.expanduser('client_secrets.json')
-_OLD_SERVICE_CREDENTIALS = os.path.expanduser('credentials.json')
+_OLD_CLIENT_SECRETS = os.path.expanduser('client_secrets.json') if platform.system() == "Windows" else os.path.expanduser('/home/pi/client_secrets.json')
+_OLD_SERVICE_CREDENTIALS = os.path.expanduser('credentials.json') if platform.system() == "Windows" else os.path.expanduser('/home/pi/credentials.json')
 
-_CACHE_DIR = os.getenv('XDG_CACHE_HOME') or os.path.expanduser('cache')
+cache = os.path.expanduser('cache') if platform.system() == "Windows" else os.path.expanduser('/home/pi/.cache')
+
+_CACHE_DIR = os.getenv('XDG_CACHE_HOME') or cache
 _VR_CACHE_DIR = os.path.join(_CACHE_DIR, 'voice-recognizer')
 
 _ASSISTANT_CREDENTIALS = (
@@ -43,7 +47,7 @@ _ASSISTANT_CREDENTIALS = (
 )
 
 # Expected location of the Assistant credentials file:
-_ASSISTANT_CREDENTIALS_FILE = os.path.expanduser('assistant.json')
+_ASSISTANT_CREDENTIALS_FILE = os.path.expanduser('assistant.json') if platform.system() == "Windows" else os.path.expanduser('/home/pi/assistant.json')
 
 
 def _load_credentials(credentials_path):
