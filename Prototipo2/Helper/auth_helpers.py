@@ -47,7 +47,7 @@ _ASSISTANT_CREDENTIALS = (
 )
 
 # Expected location of the Assistant credentials file:
-_ASSISTANT_CREDENTIALS_FILE = os.path.expanduser('assistant.json') if platform.system() == "Windows" else os.path.expanduser('/home/pi/assistant.json')
+_ASSISTANT_CREDENTIALS_FILE = _ASSISTANT_CREDENTIALS_FILE = os.path.expanduser("D:\\David\\Python\\Robot_Assistant\\Prototipo2\\Helper\assistant.json") if platform.system() == "Windows" else os.path.expanduser('/home/pi/assistant.json')
 
 
 def _load_credentials(credentials_path):

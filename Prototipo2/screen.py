@@ -1,5 +1,5 @@
 import pygame
-from Display import *
+from servoMovementAndDisplay import *
 from emotions import *
 from assistant_con_animation import Assistant
 
@@ -12,7 +12,7 @@ class Animation ():
         pygame.init()
         screen = pygame.display.set_mode((480, 320))
         #pygame.display.set_caption("Trace")
-        self.my_sprite = MySprite()
+        self.my_sprite = Eyes()
         self.my_group = pygame.sprite.Group(self.my_sprite)   
         #screen.blit(pygame.transform.rotate(screen, 180), (0, 0))
         self.screen = screen
@@ -28,8 +28,8 @@ class Animation ():
         first = False
         while loop:
             for event in pygame.event.get():
-                print("EVENTO------------------"+str(event.type)+"-----------------")
-                print(event.type)
+                #print("EVENTO------------------"+str(event.type)+"-----------------")
+                #print(event.type)
                 if event.type == pygame.QUIT or event.type == pygame.K_ESCAPE or event.type == pygame.K_LCTRL:
                     loop = 0
             if first:               
@@ -38,9 +38,9 @@ class Animation ():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 self.current_emotion = self.current_emotion+1
             else:
-                print("RUN------current_emotion----"+str(emotions[self.current_emotion][0])+"--------------"+str(emotions[self.previous_emotion][0])+"--previous_emotion------") 
+                #print("RUN------current_emotion----"+str(emotions[self.current_emotion][0])+"--------------"+str(emotions[self.previous_emotion][0])+"--previous_emotion------") 
                 if self.current_emotion != self.previous_emotion:
-                    print("Emociones------------------------------------"+emotions[self.previous_emotion][0])
+                    #print("Emociones------------------------------------"+emotions[self.previous_emotion][0])
                     self.previous_emotion = self.current_emotion
                     self.my_sprite.set_state(emotions[self.current_emotion][0])
         

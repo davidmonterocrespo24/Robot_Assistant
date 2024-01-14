@@ -9,7 +9,22 @@ from glob import glob
 import sys
 from pygame.locals import *
 import multiprocessing 
-from adafruit_servokit import ServoKit
+import platform
+from threading import Thread
+is_servo = False
+
+try:
+    from adafruit_servokit import ServoKit
+    is_servo = True
+except ImportError:
+    print("No se pudo importar ServoKit")
+    print("Instalando ServoKit")
+    is_servo = False
+    if platform.system() != "Windows":
+        os.system("sudo pip3 install adafruit-circuitpython-servokit") 
+        from adafruit_servokit import ServoKit
+        is_servo = True
+
 import time
 
 SIZE = WIDTH, HEIGHT = 400, 200 #the width and height of our screen
@@ -18,7 +33,7 @@ FPS = 5 #Frames per second
 
 
  
-class MySprite(pygame.sprite.Sprite):
+class Eyes(pygame.sprite.Sprite):
     
     expression_index={}
     LF = 5 #oreja_izquieda
@@ -52,7 +67,7 @@ class MySprite(pygame.sprite.Sprite):
         }
 
     def __init__(self):
-        super(MySprite, self).__init__()
+        super(Eyes, self).__init__()
         f_imagenes=[]
         expression= ['Enojado','Normal','Muerto','Asustado','Feliz','Triste','Sorprendido','Guino','Really','Amor','Disparar']       
         self.images=[]
@@ -62,8 +77,8 @@ class MySprite(pygame.sprite.Sprite):
             #print("Cargando archivos..............:"+str(os.path.join(os.getcwd(),'Eyes',expression[i])))   
             arch=[]      
             for k in range(0,len(archivos)):
-                arch.append(str(k+1)+expression[i]+".png")     
-                print("Cargando archivos..............:"+str(str(k+1)+expression[i]))
+                arch.append(archivos[k])     
+                print("Cargando archivos..............:"+str(str(k+1)+archivos[k]))
             f_imagenes.append(arch)
             index_array=[]            
             for j in range(0,len(f_imagenes[i])):
@@ -84,29 +99,30 @@ class MySprite(pygame.sprite.Sprite):
     def set_state(self,state):
         self.state=state
        
-        print("Estado:------------------------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ", state)
-        if self.state == 'Enojado':
-            self.angry()
-        elif self.state == 'Feliz':
-            self.happy()
-        elif self.state == 'Triste':
-            self.sad()
-        elif self.state == 'Asustado':
-            self.random1()
-        elif self.state == 'Sorprendido':
-            self.random2()
-        elif self.state == 'Guino':
-            self.default()
-        elif self.state == 'Normal':
-            self.random4()
-        elif self.state == 'Muerto':
-            self.random5()
-        elif self.state == 'Really':
-            self.random2()
-        elif self.state == 'Amor':
-            self.mover_orejas_derecha_izquierda()
-        elif self.state == 'Disparar':
-            self.disparar()
+        #print("Estado:------------------------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ", state)
+        if is_servo:
+            if self.state == 'Enojado':
+                self.angry()
+            elif self.state == 'Feliz':
+                self.happy()
+            elif self.state == 'Triste':
+                self.sad()
+            elif self.state == 'Asustado':
+                self.random1()
+            elif self.state == 'Sorprendido':
+                self.random2()
+            elif self.state == 'Guino':
+                self.default()
+            elif self.state == 'Normal':
+                self.random4()
+            elif self.state == 'Muerto':
+                self.random5()
+            elif self.state == 'Really':
+                self.random2()
+            elif self.state == 'Amor':
+                self.mover_orejas_derecha_izquierda()
+            elif self.state == 'Disparar':
+                self.disparar()
         
 
     def animation(self,index_image):
@@ -121,12 +137,14 @@ class MySprite(pygame.sprite.Sprite):
     def init(self):
         global ser    
         global kit
-        kit = ServoKit(channels=16)
+        if is_servo:
+            kit = ServoKit(channels=16)
         global startAngles
         
 
     def kit_angle(self,servoNum, angle, sleepTime):
-        kit.servo[servoNum].angle = angle
+        if is_servo:
+            kit.servo[servoNum].angle = angle
         
     def set_angles(self,lf=-1, lt=-1, rf=-1, rt=-1, nk=-1): 
         p1=False
@@ -135,19 +153,19 @@ class MySprite(pygame.sprite.Sprite):
         p4=False
         p5=False   
         if lf >= self.lfmin and lf <= self.lfmax:
-            p1 = multiprocessing.Process(target=self.kit_angle, args=(self.LF,lf, 0., ))
+            p1 = Thread(target=self.kit_angle, args=(self.LF,lf, 0., ))
             p1.start()
         if rf >= self.rfmin and rf <= self.rfmax:
-            p2 = multiprocessing.Process(target=self.kit_angle, args=(self.RF,rf, 0, ))
+            p2 = Thread(target=self.kit_angle, args=(self.RF,rf, 0, ))
             p2.start()
         if lt >= self.ltmin and lt <= self.ltmax:
-            p3 = multiprocessing.Process(target=self.kit_angle, args=(self.LT,lt,0, ))
+            p3 = Thread(target=self.kit_angle, args=(self.LT,lt,0, ))
             p3.start()
         if rt >= self.rtmin and rt <= self.rtmax:
-            p4 = multiprocessing.Process(target=self.kit_angle, args=(self.RT,rt,0, ))
+            p4 = Thread(target=self.kit_angle, args=(self.RT,rt,0, ))
             p4.start()
         if nk >= self.nkmin and nk<=self.nkmax:    
-            p5 = multiprocessing.Process(target=self.kit_angle, args=(self.NK,nk,0, ))
+            p5 = Thread(target=self.kit_angle, args=(self.NK,nk,0, ))
             p5.start()
     
        
@@ -156,7 +174,7 @@ class MySprite(pygame.sprite.Sprite):
         time.sleep(1)
 
     def happy(self):
-        print("animation: happy")
+        #print("animation: happy")
         self.set_angles(lf=self.lfmin + (self.lfmax-self.lfmin)/2, lt=self.ltmax/2, rf=self.rfmin + (self.rfmax-self.rfmin)/2, rt=self.rtmax/2, nk=self.nkmin)     
         for i in range(0,2):
             self.set_angles(lf=self.lfmin, lt=self.ltmax/2, rf=self.rfmax, rt=self.rtmax/2, nk=self.nkst)
@@ -166,12 +184,12 @@ class MySprite(pygame.sprite.Sprite):
         time.sleep(1)
         
     def angry(self):
-        print("animation: angry")
+        #print("animation: angry")
         self.set_angles(lf=self.lfmin + (self.lfmax-self.lfmin)/2, lt=(self.ltmax/4)*3, rf=self.rfmin + (self.rfmax-self.rfmin)/2, rt=self.rtmax/4, nk=self.nkmin)     
         time.sleep(1)
     
     def listen(self):
-        print("animation: listen")
+        #print("animation: listen")
         self.set_angles(lf=self.lfmin + (self.lfmax-self.lfmin)/2, lt=self.ltmax, rf=self.rfmin + (self.rfmax-self.rfmin)/2, rt=self.rtmin, nk = self.nkst) 
         time.sleep(0.5)
         self.set_angles(lf=self.lfmin + (self.lfmax-self.lfmin)/2, lt=self.ltmin, rf=self.rfmin + (self.rfmax-self.rfmin)/2, rt=self.rtmax, nk = self.nkst)    
@@ -186,7 +204,7 @@ class MySprite(pygame.sprite.Sprite):
         time.sleep(1)
 
     def default(self):
-        print("animation: default")    
+        #print("animation: default")    
         for i in range(0,2):
             self.set_angles(lf=self.lfmin, lt=self.ltmax/2, rf=self.rfmin, rt=self.rtmin, nk=self.nkst)
             time.sleep(0.5)
@@ -206,19 +224,19 @@ class MySprite(pygame.sprite.Sprite):
         self.angry()
 
     def fear(self):
-        print("animation: fear")
+        #print("animation: fear")
         self.angry()
 
     def disgust(self):
-        print("animation: disgust")
+        #print("animation: disgust")
         self.angry()
 
     def surprise(self):
-        print("animation: surprise")
+        #print("animation: surprise")
         self.angry()
 
     def mover_orejas_derecha_izquierda(self):
-        print("animation: default")    
+        #print("animation: default")    
         for i in range(0,2):
             self.set_angles(lf=self.lfmin + (self.lfmax-self.lfmin)/2, lt=self.ltmax, rf=self.rfmin + (self.rfmax-self.rfmin)/2, rt=self.rtmax, nk = self.nkst)  
             time.sleep(0.5)            
@@ -226,7 +244,7 @@ class MySprite(pygame.sprite.Sprite):
             time.sleep(0.5)
 
     def disparar(self):
-        print("animation: default")    
+        #print("animation: default")    
         for i in range(0,2):
             self.set_angles(lf=self.lfmax, lt=self.ltmin, rf=self.rfmax , rt=self.rtmin, nk = self.nkst)  
             time.sleep(0.5)            

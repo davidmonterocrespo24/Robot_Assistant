@@ -1,5 +1,5 @@
 
-from animation import Animation
+from screen import Animation
 
 
 animation = Animation(1)

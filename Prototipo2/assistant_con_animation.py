@@ -179,12 +179,12 @@ class Assistant(threading.Thread):
                             final = ' '.join(r.transcript for r in resp.speech_results) 
                             self.logger.info('Text:' + ''.join(final))   
                             self.animation.current_emotion = set_emotion(final)      
-                            print("Emotion Detected Assitente ************************: "+str(self.animation.current_emotion))                            
+                            #print("Emotion Detected Assitente ************************: "+str(self.animation.current_emotion))                            
                     if resp.dialog_state_out.supplemental_display_text:
                         display_text=resp.dialog_state_out.supplemental_display_text 
                         self.logger.info('Text:' + ''.join(display_text))   
                         self.animation.current_emotion = set_emotion(display_text)      
-                        print("Emotion Detected Oir ************************: "+str(self.animation.current_emotion))             
+                        #print("Emotion Detected Oir ************************: "+str(self.animation.current_emotion))             
                     if len(resp.audio_out.audio_data) > 0:                       
                         self.conversation_stream.write(resp.audio_out.audio_data)
                     if resp.dialog_state_out.conversation_state:
@@ -192,15 +192,15 @@ class Assistant(threading.Thread):
                         self.logger.info('Updating conversation state.')
                     if resp.dialog_state_out.volume_percentage != 0:
                         volume_percentage = resp.dialog_state_out.volume_percentage
-                        self.logger.info('Volume should be set to %s%%', volume_percentage)
+                        #self.logger.info('Volume should be set to %s%%', volume_percentage)
                         self.conversation_stream.volume_percentage = volume_percentage
                     if resp.dialog_state_out.microphone_mode == DIALOG_FOLLOW_ON:
                         continue_dialog = True
-                        self.logger.info('Expecting follow-on query from user.')
+                        #self.logger.info('Expecting follow-on query from user.')
                     elif resp.dialog_state_out.microphone_mode == CLOSE_MICROPHONE:
                         continue_dialog = False
 
-                self.logger.info('Finished playing assistant response.')
+                #self.logger.info('Finished playing assistant response.')
                 self.conversation_stream.stop_playback()
                
             self.conversation_stream.close()
@@ -209,7 +209,7 @@ class Assistant(threading.Thread):
             
         except Exception as e:
             self._create_assistant(self.credentials)
-            self.logger.exception('Skipping because of connection reset')
+            #self.logger.exception('Skipping because of connection reset')
             restart = True
         try:
             self.conversation_stream.close()
