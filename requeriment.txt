@@ -1,2 +1,5 @@
 tenacity
 sounddevice
+google-auth
+google-assistant-sdk
+google-assistant-grpc

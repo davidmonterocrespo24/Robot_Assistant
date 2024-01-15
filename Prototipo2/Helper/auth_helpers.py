@@ -37,7 +37,11 @@ _ASSISTANT_OAUTH_SCOPE = (
 _OLD_CLIENT_SECRETS = os.path.expanduser('client_secrets.json') if platform.system() == "Windows" else os.path.expanduser('/home/pi/client_secrets.json')
 _OLD_SERVICE_CREDENTIALS = os.path.expanduser('credentials.json') if platform.system() == "Windows" else os.path.expanduser('/home/pi/credentials.json')
 
-cache = os.path.expanduser('cache') if platform.system() == "Windows" else os.path.expanduser('/home/pi/.cache')
+_DIR_PROJECT = os.path.dirname(os.path.realpath(__file__)).replace("\Helper","")
+print(_DIR_PROJECT)
+
+
+cache = os.path.join(_DIR_PROJECT,"cache")   if platform.system() == "Windows" else os.path.expanduser('/home/pi/.cache')
 
 _CACHE_DIR = os.getenv('XDG_CACHE_HOME') or cache
 _VR_CACHE_DIR = os.path.join(_CACHE_DIR, 'voice-recognizer')
@@ -47,7 +51,7 @@ _ASSISTANT_CREDENTIALS = (
 )
 
 # Expected location of the Assistant credentials file:
-_ASSISTANT_CREDENTIALS_FILE = _ASSISTANT_CREDENTIALS_FILE = os.path.expanduser("D:\\David\\Python\\Robot_Assistant\\Prototipo2\\Helper\assistant.json") if platform.system() == "Windows" else os.path.expanduser('/home/pi/assistant.json')
+_ASSISTANT_CREDENTIALS_FILE = _ASSISTANT_CREDENTIALS_FILE = os.path.expanduser("D:\\David\\Python\\Robot_Assistant\\Prototipo2\\Helper\\assistant.json") if platform.system() == "Windows" else os.path.expanduser('/home/pi/assistant.json')
 
 
 def _load_credentials(credentials_path):
@@ -79,7 +83,7 @@ def _credentials_flow_interactive(client_secrets_path):
         webbrowser.register('chromium-browser', None, webbrowser.Chrome('chromium-browser'), preferred=True)
         credentials = flow.run_local_server()
     else:
-        credentials = flow.run_console()
+        credentials = flow.run_local_server()
     return credentials
 
 
