@@ -47,3 +47,12 @@ fbcon=map:10 fbcon=font:VGA8x8
 
 # RUN
 Copiar el contenido de Prototipo2 y ejecutar el archivo main.py 
+
+
+
+# Instalar
+
+Instala las dependencias de python tal cual como se indica en el archivo "requirements.txt"
+
+sudo pip3 install -r requirements.txt
+
