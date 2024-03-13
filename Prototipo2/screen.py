@@ -2,6 +2,7 @@ import pygame
 from servoMovementAndDisplay import *
 from emotions import *
 from assistant_con_animation import Assistant
+import random
 
 class Animation ():
 
@@ -19,6 +20,12 @@ class Animation ():
         self.clock = pygame.time.Clock()
         self.assistant = Assistant(self,language_code="en-AU")
         self.assistant.start()
+
+    def add_random_movement(self):
+        max_displacement = 2  # Ajusta la máxima cantidad de movimiento
+        displacement = pygame.math.Vector2(random.uniform(-max_displacement, max_displacement),
+                                           random.uniform(-max_displacement, max_displacement))
+        return displacement
 
 
     def run(self):        
@@ -44,11 +51,15 @@ class Animation ():
                     self.previous_emotion = self.current_emotion
                     self.my_sprite.set_state(emotions[self.current_emotion][0])
         
+            eye_displacement = self.add_random_movement()
+            self.my_sprite.rect.move_ip(eye_displacement)
+
             self.my_group.update()      
-            self.screen.fill((0,0,0))
+            self.screen.fill((0, 0, 0))
             self.my_group.draw(self.screen)
             pygame.display.update()
             self.clock.tick(15)
+            
         self.assistant.stop()
         self.assistant.join()
         pygame.quit()

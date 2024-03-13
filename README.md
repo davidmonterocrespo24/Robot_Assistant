@@ -56,3 +56,6 @@ Instala las dependencias de python tal cual como se indica en el archivo "requir
 
 sudo pip3 install -r requirements.txt
 
+es mejor ejecutar el programa en la pc, loguearse y copiar las credenciales generadas en el rasberry pi
+
+
